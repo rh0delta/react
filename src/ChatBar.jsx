@@ -1,10 +1,36 @@
 import React from 'react'
 
-const ChatBar = () => (
-<footer className="chatbar">
-  <input className="chatbar-username" placeholder="Your Name (Optional)" />
-  <input className="chatbar-message" placeholder="Type a message and hit ENTER" />
-</footer>
-)
+class ChatBar extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      username: props.currentUser.name,
+      message: ''
+    }
+  }
+
+  handleMessageUpdate = (e) => {
+      this.setState({message: e.target.value})
+  }
+
+  checkChar = (f) => {
+    if (f.key === 'Enter') {
+      this.props.handleNewMessage(this.state)
+      this.setState({message: ''})
+    }
+  }
+
+  render(props) {
+    return (
+      <footer className="chatbar">
+        <input className="chatbar-username" type="text" defaultValue={this.state.username} />
+        <input className="chatbar-message" type="text"
+          value={this.state.message}
+          onChange={this.handleMessageUpdate}
+          onKeyPress={this.checkChar}
+          placeholder="Type a message and hit ENTER" />
+      </footer>
+  )};
+}
 
 export default ChatBar;

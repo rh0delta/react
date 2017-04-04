@@ -1,8 +1,9 @@
 import React from 'react'
 
-const Message = () => (
-  <div className="message system">
-    Anonymous1 changed their name to nomnom.
+const Message = (props) => (
+  <div className="message">
+      <span className="message-username"> {props.message.username} </span>
+      <span className="message-content"> {props.message.content}</span>
   </div>
 )
 

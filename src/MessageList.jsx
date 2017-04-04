@@ -1,9 +1,11 @@
-import React from 'react'
+import React    from 'react'
+import Message  from './Message.jsx';
 
-const MessageList = () => (
-  <div className="message">
-    <span className="message-username">Anonymous1</span>
-    <span className="message-content">I won't be impressed with technology until I can download food.</span>
+const MessageList = (props) => (
+  <div>
+  { props.messages.map ( (message) =>
+    <Message key = {message.id} message = {message} />
+    )}
   </div>
 )
 
