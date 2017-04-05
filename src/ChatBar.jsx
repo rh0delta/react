@@ -4,7 +4,7 @@ class ChatBar extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      username: props.currentUser.name,
+      username: '',
       message: ''
     }
   }
@@ -13,21 +13,35 @@ class ChatBar extends React.Component {
       this.setState({message: e.target.value})
   }
 
-  checkChar = (f) => {
+  checkMessageChar = (f) => {
     if (f.key === 'Enter') {
-      this.props.handleNewMessage(this.state)
+      this.props.submitNewMessage(this.state)
       this.setState({message: ''})
+    }
+  }
+
+  handleUserUpdate = (e) => {
+      this.setState({username: e.target.value})
+  }
+
+  checkUserChar = (f) => {
+    if (f.key === 'Enter') {
+      this.props.submitUserUpdate(this.state)
     }
   }
 
   render(props) {
     return (
       <footer className="chatbar">
-        <input className="chatbar-username" type="text" defaultValue={this.state.username} />
+        <input className="chatbar-username" type="text"
+          value={this.state.username}
+          onChange={this.handleUserUpdate}
+          onKeyPress={this.checkUserChar}
+          placeholder="Username" />
         <input className="chatbar-message" type="text"
           value={this.state.message}
           onChange={this.handleMessageUpdate}
-          onKeyPress={this.checkChar}
+          onKeyPress={this.checkMessageChar}
           placeholder="Type a message and hit ENTER" />
       </footer>
   )};

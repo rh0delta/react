@@ -11,7 +11,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-          currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
+          currentUser: {name: ''}, // optional. if currentUser is not defined, it means the user is Anonymous
           messages: []
         }
     this.chatSocket = chatSocket;
@@ -23,10 +23,21 @@ class App extends React.Component {
     this.setState({messages: messages})
   }
 
-  handleNewMessage = (e) => {
-    const newMessage = {username: e.username, content: e.message};
-    const messageForServer = JSON.stringify(newMessage)
-    const sendToServer = this.chatSocket.send(messageForServer);
+  handleUserUpdate = (f) => {
+    this.state.currentUser = f
+  }
+
+   handleNewMessage = (e) => {
+    let username = 'Anonymous'
+    let message = '';
+    if (! e.username == '') {
+      username = e.username;
+    }
+    if (! e.message == '') {
+      const newMessage = {username: username, content: e.message};
+      const messageForServer = JSON.stringify(newMessage)
+      const sendToServer = this.chatSocket.send(messageForServer);
+    }
   }
 
 
@@ -42,7 +53,7 @@ class App extends React.Component {
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
         <MessageList messages={this.state.messages} />
-        <ChatBar handleNewMessage={this.handleNewMessage} currentUser={this.state.currentUser}/>
+        <ChatBar submitNewMessage={this.handleNewMessage} submitUserUpdate={this.handleUserUpdate} currentUser={this.state.currentUser}/>
       </div>
     )
   }
