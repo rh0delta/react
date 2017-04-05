@@ -11,7 +11,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-          currentUser: {name: ''}, // optional. if currentUser is not defined, it means the user is Anonymous
+          currentUser: {name: 'Anonymous'}, // optional. if currentUser is not defined, it means the user is Anonymous
           messages: []
         }
     this.chatSocket = chatSocket;
@@ -24,7 +24,16 @@ class App extends React.Component {
   }
 
   handleUserUpdate = (f) => {
-    this.state.currentUser = f
+    let oldUserName = this.state.currentUser.name;
+    let newUserName = f.username
+    if (oldUserName != newUserName) {
+      let content = `${oldUserName} has changed their name to ${newUserName}.`
+      console.log(content)
+      const newMessage = {type: 'postNotification', content: content};
+      const messageForServer = JSON.stringify(newMessage)
+      const sendToServer = this.chatSocket.send(messageForServer);
+      this.state.currentUser.name = newUserName
+    }
   }
 
    handleNewMessage = (e) => {
@@ -34,7 +43,7 @@ class App extends React.Component {
       username = e.username;
     }
     if (! e.message == '') {
-      const newMessage = {username: username, content: e.message};
+      const newMessage = {type: 'postMessage', username: username, content: e.message};
       const messageForServer = JSON.stringify(newMessage)
       const sendToServer = this.chatSocket.send(messageForServer);
     }
