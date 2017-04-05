@@ -27,8 +27,6 @@ class App extends React.Component {
     const newMessage = {username: e.username, content: e.message};
     const messageForServer = JSON.stringify(newMessage)
     const sendToServer = this.chatSocket.send(messageForServer);
-    // const messages = this.state.messages.concat(newMessage)
-    // this.setState({messages: messages})
   }
 
 
