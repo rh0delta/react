@@ -9,6 +9,8 @@ const MessageList = (props) => (
       return ( <Message key = {message.id} message = {message} /> )
     } else if (message.type == 'incomingNotification') {
       return ( <Notification key = {message.id}  message = {message} /> )
+    } else {
+      return ( <h3> AAAAA </h3>)
     }
   })
 }

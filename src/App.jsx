@@ -2,6 +2,7 @@ import React from 'react';
 
 import ChatBar      from './ChatBar.jsx';
 import MessageList  from './MessageList.jsx';
+import Navbar       from './Navbar.jsx'
 
 import '../styles/home.scss'
 
@@ -12,15 +13,20 @@ class App extends React.Component {
     super(props);
     this.state = {
           currentUser: {name: 'Anonymous'}, // optional. if currentUser is not defined, it means the user is Anonymous
-          messages: []
+          messages: [],
+          userCount: 0,
         }
     this.chatSocket = chatSocket;
   }
 
   updateMessages = (data) => {
     let messageObj = JSON.parse(data.data)
-    const messages = this.state.messages.concat(messageObj)
-    this.setState({messages: messages})
+    if ( messageObj.type != 'incomingSystemNotification') {
+      const messages = this.state.messages.concat(messageObj)
+      this.setState({messages: messages})
+    } else {
+      this.setState({userCount: messageObj.userCount})
+    }
   }
 
   handleUserUpdate = (f) => {
@@ -58,9 +64,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="chatty-app">
-        <nav className="navbar">
-          <a href="/" className="navbar-brand">Chatty</a>
-        </nav>
+        <Navbar userCount = {this.state.userCount} />
         <MessageList messages={this.state.messages} />
         <ChatBar submitNewMessage={this.handleNewMessage} submitUserUpdate={this.handleUserUpdate} currentUser={this.state.currentUser}/>
       </div>
