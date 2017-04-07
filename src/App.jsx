@@ -7,12 +7,13 @@ import Navbar       from './Navbar.jsx'
 import '../styles/home.scss'
 
 var chatSocket;
+const uuid = require('uuid');
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-          currentUser: {name: 'Anonymous'}, // optional. if currentUser is not defined, it means the user is Anonymous
+          currentUser: {name: 'Anonymous', uuid: uuid()},
           messages: [],
           userCount: 0,
         }
@@ -33,10 +34,9 @@ class App extends React.Component {
     let oldUserName = this.state.currentUser.name;
     let newUserName = f.username
     if (oldUserName != newUserName) {
-      let content = `${oldUserName} has changed their name to ${newUserName}.`
-      console.log(content)
-      const newMessage = {type: 'postNotification', content: content};
+      const newMessage = {type: 'postNotification', oldUserName: oldUserName, newUserName: newUserName};
       const messageForServer = JSON.stringify(newMessage)
+      console.log(messageForServer)
       const sendToServer = this.chatSocket.send(messageForServer);
       this.state.currentUser.name = newUserName
     }
@@ -49,7 +49,7 @@ class App extends React.Component {
       username = e.username;
     }
     if (! e.message == '') {
-      const newMessage = {type: 'postMessage', username: username, content: e.message};
+      const newMessage = {type: 'postMessage', username: username, uuid: this.state.currentUser.uuid, content: e.message};
       const messageForServer = JSON.stringify(newMessage)
       const sendToServer = this.chatSocket.send(messageForServer);
     }

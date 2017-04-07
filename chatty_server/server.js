@@ -3,8 +3,10 @@
 const express = require('express');
 const uuid = require('uuid');
 const SocketServer = require('ws').Server;
+const randomColor = require('random-color')
 
-let userCount = 0;
+let users = []
+let currentUser;
 
 // Set the port to 3001
 const PORT = 3001;
@@ -57,18 +59,39 @@ wss.broadcast = function(data) {
   });
 };
 
+function getColouredMessage(jsonMessage) {
+  let isNewUser = true;
+  let currentUuid = '';
+  for (i in users) {
+    if (users[i].uuid == jsonMessage.uuid) {
+      isNewUser = false;
+      currentUser = users[i]
+      break;
+    }
+  }
+
+  if (isNewUser) {
+    let newUser = {uuid: jsonMessage.uuid, color: randomColor().hexString()}
+    users.push(newUser)
+    currentUser = newUser;
+  }
+  return currentUser.color
+}
 
 // Handles incoming messages.
 // Stores the current state of the textbox and broadcasts it
 function handleMessage(message) {
   let outgoing = '';
   let jsonMessage = JSON.parse(message)
+
   switch(jsonMessage.type) {
     case "postMessage":
       outgoing = 'incomingMessage'
+      jsonMessage.color = getColouredMessage(jsonMessage);
       break;
     case "postNotification":
-       outgoing = 'incomingNotification'
+      outgoing = 'incomingNotification'
+      jsonMessage['content'] = jsonMessage.oldUserName + ' has changed their name to ' + jsonMessage.newUserName
       break;
     default:
       throw new Error("Unknown event type " + jsonMessage.type);
